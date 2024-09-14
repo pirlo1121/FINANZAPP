@@ -1,22 +1,30 @@
 import { Schema, model } from "mongoose";
 
-const finanzasSchema = new Schema({
-    nombre: String,
-    salario: {
+const usuarioSchema = new Schema({
+    nombre: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
         required: true,
-        type: Number
+        unique: true
+    },
+    salario: {
+        type: Number,
+        required: true
     },
     tope: {
         type: Number,
         required: true
-    }, // maximo a gastar
+    }, // máximo a gastar
     ingresosExtras: [Number],
-    gastosFijos: [{ descripcion: String, monto: Number }],
-    gastosEsporadicos: [{ descripcion: String, monto: Number }],
-    inversiónes: [{descripcion: String, monto: Number}]
+    fechaCreacion: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-// Modelo para finanzas
-const Finanzas = model('Finanzas', finanzasSchema);
+const Usuario = model('Usuario', usuarioSchema);
 
-export default Finanzas
+export default Usuario;
