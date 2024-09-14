@@ -4,8 +4,8 @@ import { authUser } from "../middlewares/validateToken.js";
 
 const router = Router();
 
-router.post('/gastos/:id', authUser , addExpends )
-// router.post('/gastos/:id', addExpends )
+// router.post('/gastos/:id', authUser , addExpends )
+router.post('/gastos/:id', addExpends )
 // router.get('/gastos/:id', expends )
 router.get('/gastos', expends )
 

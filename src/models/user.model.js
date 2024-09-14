@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import encryptPassword from "../middlewares/hashPass.js";
 
 const usuarioSchema = new Schema({
     nombre: {
@@ -9,6 +10,10 @@ const usuarioSchema = new Schema({
         type: String,
         required: true,
         unique: true
+    },
+    password: {
+        type: String,
+        required: true,
     },
     salario: {
         type: Number,
@@ -24,6 +29,9 @@ const usuarioSchema = new Schema({
         default: Date.now
     }
 });
+
+// Usa el middleware importado
+usuarioSchema.pre('save', encryptPassword);
 
 const Usuario = model('Usuario', usuarioSchema);
 
