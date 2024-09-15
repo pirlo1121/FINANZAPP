@@ -7,7 +7,7 @@ const router = Router();
 // router.post('/gastos/:id', authUser , addExpends )
 router.post('/gastos/:id', addExpends )
 // router.get('/gastos/:id', expends )
-router.get('/gastos', expends )
+router.get('/gastos/:id', expends )
 
 
 

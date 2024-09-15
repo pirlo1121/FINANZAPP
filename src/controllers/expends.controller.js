@@ -24,13 +24,22 @@ export async function addExpends(req, res){
 
 export async function expends(req, res) {
   try {
-      const { tipo } = req.query;
-      if (!tipo || !['fijos', 'esporadicos', 'todos'].includes(tipo)) {
-          return res.status(400).json({ error: 'Tipo de gasto no válido' });
-      }
+    const { tipo } = req.query;
+    const id = req.params.id;
 
-      const filtro = tipo && tipo !== 'todos' ? { tipo } : {};
-      const gastos = await Gasto.find(filtro).select("monto tipo descripcion");
+    if (!id) {
+        return res.status(400).json({ error: 'ID de usuario no proporcionado' });
+    }
+
+    if (!tipo || !['fijos', 'esporadicos', 'todos'].includes(tipo)) {
+        return res.status(400).json({ error: 'Tipo de gasto no válido' });
+    }
+
+    const filtro = { usuarioId: id };
+    if (tipo !== 'todos') {
+        filtro.tipo = tipo;
+    }
+    const gastos = await Gasto.find(filtro).select("monto tipo descripcion");
 
       // Validación de monto
       const sumaTotal = gastos.reduce((acc, item) => {
