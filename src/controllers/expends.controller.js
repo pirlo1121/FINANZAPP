@@ -14,15 +14,14 @@ export async function addExpends(req, res){
 
     return res.status(200).json({ok: true, gasto})
     
-  } catch (error) {
+  } catch (err) {
     console.log(error)
-    throw new Error('hay un error mano')
-    
+    res.status(500).send('Server Error');
   }
 }
 
 
-export async function expends(req, res) {
+export async function getExpends(req, res) {
   try {
     const { tipo } = req.query;
     const id = req.params.id;
@@ -57,23 +56,22 @@ export async function expends(req, res) {
   }
 }
 
+export async function updateExpend(req, res){
+  const id = req.params.id;
+  const data = req.body;
 
-// export async function expendsMonth(req, res){
-//     const {nombre} = req.params
-//     try {
-//       const user = await Finanzas.findOne({nombre});
-//       if(!user) return res.send('usuario inexistente')
-  
-  
-  
-//       const totalgastos = user.gastosEsporadicos.reduce((acc, gasto) => acc + gasto.monto, 0)
-//       console.log(`total gastoos: ${totalgastos}`)
-  
-//       res.json({ok: true, msg: 'papi vamo bien'})
-  
-//     } catch (error) {
-//       console.error(error)
-      
-//     }
-  
-//   }
+  try {
+    const expend = await Gasto.findById({_id: id})
+
+    expend.descripcion = data.descripcion || expend.descripcion
+    expend.monto = data.monto || expend.monto
+    expend.tipo = data.tipo || expend.tipo
+
+    expend.save()
+    res.status(200).json({ok: true, expend})
+
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+
+}
