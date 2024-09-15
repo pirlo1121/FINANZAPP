@@ -20,15 +20,12 @@ export async function addExpends(req, res){
   }
 }
 
-
 export async function getExpends(req, res) {
   try {
     const { tipo } = req.query;
     const id = req.params.id;
 
-    if (!id) {
-        return res.status(400).json({ error: 'ID de usuario no proporcionado' });
-    }
+    if (!id) return res.status(400).json({ error: 'ID de usuario no proporcionado' });
 
     if (!tipo || !['fijos', 'esporadicos', 'todos'].includes(tipo)) {
         return res.status(400).json({ error: 'Tipo de gasto no válido' });
@@ -39,6 +36,7 @@ export async function getExpends(req, res) {
         filtro.tipo = tipo;
     }
     const gastos = await Gasto.find(filtro).select("monto tipo descripcion");
+    const user = await Usuario.findById({_id: id}).select("nombre salario tope")
 
       // Validación de monto
       const sumaTotal = gastos.reduce((acc, item) => {
@@ -47,8 +45,12 @@ export async function getExpends(req, res) {
           }
           return acc + item.monto;
       }, 0);
-
-      return res.json({ gastos, sumaTotal });
+      let msg = 'aun no superas tu tope mensual'
+      if( sumaTotal > user.tope) msg = 'superaste tu tope mensual de gastos' ;
+      
+      const total = user.salario - sumaTotal;
+ 
+      return res.json({ gastos, sumaTotal, total, msg });
 
   } catch (err) {
       console.error(err); // Log del error para depuración
@@ -74,4 +76,19 @@ export async function updateExpend(req, res){
     res.status(500).send('Server Error');
   }
 
+}
+
+export async function deleteExpend(req,res) {
+  const id = req.params.id;
+  try {
+    if(!id) return res.json({ok: false, msg: 'error al obtener id'})
+    const expend = await Gasto.findByIdAndDelete({_id:id});
+
+    return res.status(200).json({ok: true, expend})
+
+  } catch (error) {
+    console.log(error);
+    res.send('server error')
+  }
+  
 }
