@@ -20,7 +20,7 @@ export async function getUser(req, res){
     return res.json({ok: true, user})
   } catch (error) {
     console.log(error)
-    return res.status(500).send('hubo un error')
+    return res.status(500).send('server internal error')
   }
 }
 
@@ -69,4 +69,17 @@ export async function updateUser(req, res){
     return res.json('server inter error')
     
   }
+}
+
+export async function deleteUser(req, res) {
+  const id = req.params.id;
+  try {
+    const userDelte = await Usuario.findByIdAndDelete({_id : id})
+    res.status(200).json({ok: true, userDelte})
+  } catch (error) {
+    console.log(error)
+    res.send('server internal error')
+    
+  }
+  
 }
