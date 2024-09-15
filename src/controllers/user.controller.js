@@ -22,8 +22,8 @@ export async function getUser(req, res){
     console.log(error)
     return res.status(500).send('hubo un error')
   }
-
 }
+
 export async function login(req, res) {
   const { email, password } = req.body;
   try {
@@ -38,14 +38,35 @@ export async function login(req, res) {
     }
     const data = user.toObject()
     delete data.password
-    // console.log(data)
-
     const payload = {...data}
-
     const token = generateToken(payload);
 
     return res.json({ ok: true, token });
   } catch (error) {
     return res.status(500).json({ ok: false, message: 'Error en el servidor' });
+  }
+}
+
+export async function updateUser(req, res){
+  const userId = req.params.id;
+  const {nombre, email, password, salario, tope} = req.body
+
+  try {
+    const user = await Usuario.findById({_id: userId})
+    if(!user) return res.json({ok: false, msg: 'No se encontró el usuario'})
+    
+    user.nombre = nombre || user.nombre;
+    user.email = email || user.email;
+    user.password = password || user.password;
+    user.salario = salario || user.salario;
+    user.tope = tope || user.tope;
+
+    await user.save();
+
+    res.json({ok:true, user})
+
+  } catch (error) {
+    return res.json('server inter error')
+    
   }
 }
